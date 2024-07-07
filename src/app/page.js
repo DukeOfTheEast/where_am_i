@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import "mapbox-gl/dist/mapbox-gl.css"; // Import Mapbox CSS
+import Spinner from "./spinner/page";
 
 // Dynamically import the Map component from react-map-gl
 const Map = dynamic(() => import("react-map-gl"), { ssr: false });
@@ -62,37 +63,42 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h1>My Location App</h1>
-      <button
-        onClick={getLocation}
-        style={{ padding: "10px 20px", fontSize: "16px", marginTop: "20px" }}
-      >
-        Get My Location
-      </button>
-      {loading ? (
-        <p>Loading...</p>
-      ) : location.latitude && location.longitude ? (
-        <div style={{ marginTop: "20px" }}>
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
-          {address ? <p>Address: {address}</p> : <p>Fetching address...</p>}
-          <div style={{ height: "400px", marginTop: "20px" }}>
-            <Map
-              initialViewState={{
-                longitude: location.longitude,
-                latitude: location.latitude,
-                zoom: 15,
-              }}
-              style={{ width: "100%", height: "100%" }}
-              mapStyle="mapbox://styles/mapbox/streets-v11"
-              mapboxAccessToken={mapboxToken}
-            >
-              <Marker
-                latitude={location.latitude}
-                longitude={location.longitude}
-              ></Marker>
-              {/* <div
+    <div>
+      <nav className="p-3 bg-green-800">
+        <h1 className="font-extrabold text-3xl text-white font-serif">
+          Onsite
+        </h1>
+      </nav>
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <button
+          onClick={getLocation}
+          className="bg-green-500 rounded-2xl p-3 text-white"
+        >
+          Get My Location
+        </button>
+        {loading ? (
+          <Spinner />
+        ) : location.latitude && location.longitude ? (
+          <div style={{ marginTop: "20px" }}>
+            <p>Latitude: {location.latitude}</p>
+            <p>Longitude: {location.longitude}</p>
+            {address ? <p>Address: {address}</p> : <Spinner />}
+            <div style={{ height: "400px", marginTop: "20px" }}>
+              <Map
+                initialViewState={{
+                  longitude: location.longitude,
+                  latitude: location.latitude,
+                  zoom: 15,
+                }}
+                style={{ width: "100%", height: "100%" }}
+                mapStyle="mapbox://styles/mapbox/streets-v11"
+                mapboxAccessToken={mapboxToken}
+              >
+                <Marker
+                  latitude={location.latitude}
+                  longitude={location.longitude}
+                ></Marker>
+                {/* <div
                 className="marker"
                 latitude={location.latitude}
                 longitude={location.longitude}
@@ -105,15 +111,16 @@ export default function Home() {
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 4.25 7 13 7 13s7-8.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5z" />
                 </svg>
               </div> */}
-              <div style={{ position: "absolute", right: 10, top: 10 }}>
-                <NavigationControl />
-              </div>
-            </Map>
+                <div style={{ position: "absolute", right: 10, top: 10 }}>
+                  <NavigationControl />
+                </div>
+              </Map>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p>{error || "Click the button to get your location."}</p>
-      )}
+        ) : (
+          <p>{error}</p>
+        )}
+      </div>
     </div>
   );
 }
